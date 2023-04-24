@@ -20,8 +20,8 @@ public class TopDownController : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
 
-        Debug.Log("Horizontal: " + x);
-        Debug.Log("Vertical: " + y);
+        //Debug.Log("Horizontal: " + x);
+        //Debug.Log("Vertical: " + y);
 
         Vector3 inputTeclado = new Vector3(x, y, 0); //criou um vetor com os valores de input
 
