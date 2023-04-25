@@ -2,22 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
-public class GameManager1 : MonoBehaviour
+public class GameManager2 : MonoBehaviour
 {
-
     public TextMeshProUGUI mensagem, textoContador;
-    public int delay;
     public int contador;
 
     // Start is called before the first frame update
     void Start()
     {
         mensagem.text = "Vai!";
-        Invoke("MudarMensagem", delay);
+        Invoke("ModificarMensagem", 3);
     }
 
-    void MudarMensagem()
+
+    void ModificarMensagem()
     {
         mensagem.text = "";
     }
@@ -27,12 +27,5 @@ public class GameManager1 : MonoBehaviour
         contador += valor;
         //atualizar o texto
         textoContador.text = "Moedas: " + contador;
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
