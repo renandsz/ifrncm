@@ -1,14 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 
 public class PlatformerController : MonoBehaviour
 {
-    //variáveis públicas aparecem no inspetor
+    //variï¿½veis pï¿½blicas aparecem no inspetor
     public int velocidade;
     public int forcaPulo;
     public SpriteRenderer visual;
     public bool noAr;
+
+    public bool olhandoPraDireita = true;
 
     // Start is called before the first frame update
     void Start()
@@ -49,13 +53,31 @@ public class PlatformerController : MonoBehaviour
         //olhar pra esquerda ou direita
         if (x > 0)
         {
-            //ta indo pra direita, flip é falso
+            //ta indo pra direita, flip ï¿½ falso
             visual.flipX = false;
+            olhandoPraDireita = true;
         }
         else if (x < 0)
         {
-            //ta indo pra direita, flip é verdadeiro
+            //ta indo pra esquerda, flip ï¿½ verdadeiro
             visual.flipX = true;
+            olhandoPraDireita = false;
+        }
+        
+        
+        
+        
+        //atirar
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            float angulo = olhandoPraDireita ? 0 : 180; 
+            
+            GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
+            
+            GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
+            
+            GetComponent<AudioSource>().Play();
         }
         
     }
