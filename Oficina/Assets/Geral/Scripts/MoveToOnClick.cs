@@ -22,7 +22,7 @@ public class MoveToOnClick : MonoBehaviour
     {
         if (movendo)
         {
-            if (Vector3.Distance(target.position, posicaoAlvo)>limite)
+            if (Vector3.Distance(target.position, posicaoAlvo) > limite)
             {
                 target.position = Vector3.MoveTowards(target.position, posicaoAlvo, velocidade * Time.deltaTime);
             }
