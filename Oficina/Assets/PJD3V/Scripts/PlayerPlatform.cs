@@ -7,7 +7,7 @@ public class PlayerPlatform : MonoBehaviour
 
     public int velocidade;
     public int forcaPulo;
-    public bool noAr;
+    public bool noAr, olhandoPraDireita;
     public SpriteRenderer visual;
 
 
@@ -52,14 +52,39 @@ public class PlayerPlatform : MonoBehaviour
         {
             //olhando pra esquerda
             visual.flipX = true;
+            olhandoPraDireita = false;
+
         }
         else if(x > 0)
         {
             //olhando pra direita
             visual.flipX = false;
+            olhandoPraDireita = true;
         }
 
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            float angulo = 0;
 
+            if (olhandoPraDireita)
+            {
+                angulo = 0;
+            }
+            else
+            {
+                angulo = 180;
+            }
+
+
+
+
+
+
+            Debug.Log("ATIROU");
+            GetComponent<AudioSource>().Play();
+
+            GetComponent<AtiradorProjetil>().Atirar().Rotate(new Vector3(0,0,angulo));
+        }
 
     }
 }
