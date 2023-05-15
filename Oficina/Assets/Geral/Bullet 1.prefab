@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2293360039471674155}
   - component: {fileID: 8781927378838704610}
   m_Layer: 0
-  m_Name: Bullet
+  m_Name: Bullet 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98,8 +98,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69a047fb3c402604a91c95d9c0bcd896, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocidade: 5
-  tipo: 0
+  velocidade: 20
+  tipo: 1
 --- !u!61 &8781927378838704610
 BoxCollider2D:
   m_ObjectHideFlags: 0

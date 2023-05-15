@@ -3,9 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="37fa5b97-38c8-4b58-b08d-60c22543ece8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Oficina/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Oficina/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/PJD3M/Scripts/PlatformerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/PJD3M/Scripts/PlatformerController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Geral/Bullet.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Geral/Bullet.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Geral/Scripts/Bullet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Geral/Scripts/Bullet.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Geral/Scripts/SpawnOnClick.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Geral/Scripts/SpawnOnClick.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +21,9 @@
     <setting file="file://$PROJECT_DIR$/Assets/Geral/Scripts/Atirador.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Geral/Scripts/Bullet.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Geral/Scripts/DestroyOnClick.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Geral/Scripts/Math/Bouncer.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Geral/Scripts/Math/SineMovement.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Geral/Scripts/Math/Timer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Geral/Scripts/MoveToOnClick.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Geral/Scripts/PickUp.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -82,7 +87,8 @@
       <workItem from="1681813601431" duration="26000" />
       <workItem from="1682377037701" duration="2920000" />
       <workItem from="1682983594654" duration="1932000" />
-      <workItem from="1683584361034" duration="4074000" />
+      <workItem from="1683584361034" duration="4827000" />
+      <workItem from="1684071080141" duration="13280000" />
     </task>
     <servers />
   </component>
