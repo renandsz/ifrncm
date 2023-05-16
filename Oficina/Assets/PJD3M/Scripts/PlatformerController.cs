@@ -73,9 +73,9 @@ public class PlatformerController : MonoBehaviour
         {
             float angulo = olhandoPraDireita ? 0 : 180; 
             
-            GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
+           // GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
             
-            GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
+           // GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
             
             GetComponent<AudioSource>().Play();
         }

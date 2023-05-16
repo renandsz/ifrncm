@@ -81,7 +81,7 @@ public class PlayerPlatform : MonoBehaviour
 
 
             Debug.Log("ATIROU");
-            GetComponent<AudioSource>().Play();
+            //GetComponent<AudioSource>().Play();
 
             GetComponent<AtiradorProjetil>().Atirar().Rotate(new Vector3(0,0,angulo));
         }
