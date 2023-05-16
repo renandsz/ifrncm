@@ -7,9 +7,15 @@ using UnityEngine;
 public class SpawnOnClick : MonoBehaviour
 {
     public GameObject coisa;
-       
-    
-    private void OnMouseUp()
+    public bool shoot;
+    public float lifetime = 0.25f;
+    public void Spawn()
+    {
+        GameObject b = Instantiate(coisa, transform.position ,transform.rotation );
+        Destroy(b, lifetime);
+    }
+
+    private void OnMouseDown()
     {
         Vector3 posicaoAlvo = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         posicaoAlvo.z = transform.position.z;
@@ -17,5 +23,11 @@ public class SpawnOnClick : MonoBehaviour
         Instantiate(coisa, posicaoAlvo ,Quaternion.identity );
     }
 
-   
+    void FixedUpdate()
+    {
+        if (shoot)
+        {
+            Spawn();
+        }
+    }
 }
