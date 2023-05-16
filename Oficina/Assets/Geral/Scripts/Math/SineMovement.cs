@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 public enum TipoMovimento
@@ -21,17 +22,14 @@ public class SineMovement : MonoBehaviour
 
     public float amplitude = 1f;
 
-    private SpriteRenderer renderer;
+    [Range(0, 360)] public int anguloInicial;
 
-    private void Start()
-    {
-        TryGetComponent(out renderer);
-    }
+
+    
 
     void Update()
     {
         CalcularAngulo();
-       // MarcarVolta();
 
         switch (tipo)
         {
@@ -54,24 +52,8 @@ public class SineMovement : MonoBehaviour
                 break;
         }
 
-       
-
-        
-        
-
     }
 
-    void MarcarVolta()
-    {
-        if (angulo is < 10 or > 350 )
-        {
-            renderer.color = Color.red;
-        }
-        else
-        {
-            renderer.color = Color.white;
-        }
-    }
     void CalcularAngulo()
     {
         angulo += velocidade * Time.deltaTime;
@@ -90,6 +72,7 @@ public class SineMovement : MonoBehaviour
 
     void Rotacao()
     {
+        transform.position = Vector3.zero;
         transform.rotation = Quaternion.Euler(0,0,angulo);
     }
 
@@ -102,7 +85,6 @@ public class SineMovement : MonoBehaviour
     }
     void Cosseno()
     {
-       // ResetarRotacao();
         transform.rotation = Quaternion.Euler(0,0,-90);
         float x = Mathf.Cos(Mathf.Deg2Rad * angulo);
         transform.position = new Vector3(x * amplitude,0, 0);
@@ -122,6 +104,39 @@ public class SineMovement : MonoBehaviour
         float x = Mathf.Cos(Mathf.Deg2Rad * angulo);
         float y = Mathf.Sin(Mathf.Deg2Rad * angulo);
         transform.position = new Vector3(x * amplitude, y * amplitude, 0);
+
+
+
+
+        int dado = Random.Range(0, 7); // aleatório entre 0 e 6
+        
+        float posicaoX = Random.Range(0.0f, 10.0f); // aleatório entre 0.0 e 10.0
+        float posicaoY = Random.Range(0.0f, 10.0f); // aleatório entre 0.0 e 10.0
+
+        Vector2 posicaoAleatória = new Vector2(posicaoX, posicaoY);
+        // vector 2 aleatório
+
+
+
+        float valorSorteado = Random.value;
+        
+        if (valorSorteado < 0.3f)
+        {
+            //30% de chance
+        }
+        else if (valorSorteado < 0.4f)
+        {
+            //10% de chance
+        }
+        else
+        {
+            //60% de chance
+            //Vector3.Lerp()
+          
+        }
+            
+
+
     }
 
 }
