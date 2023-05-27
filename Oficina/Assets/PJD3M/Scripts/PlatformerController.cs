@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlatformerController : MonoBehaviour
 {
@@ -36,6 +37,10 @@ public class PlatformerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+         barra.value = Mathf.Lerp(barra.value, vidaAtual, 5 * Time.deltaTime);
+
+        
         //pegando o input horizontal
 
         float x = Input.GetAxis("Horizontal");
@@ -71,14 +76,23 @@ public class PlatformerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Z))
         {
+            vidaAtual -= 30;
+
+
+
+
             float angulo = olhandoPraDireita ? 0 : 180; 
             
-            GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
+           // GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
             
-            GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
+           // GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
             
             GetComponent<AudioSource>().Play();
         }
+
         
     }
+
+    public Slider barra;
+    public float vidaAtual = 100;
 }
