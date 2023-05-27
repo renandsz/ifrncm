@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="37fa5b97-38c8-4b58-b08d-60c22543ece8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Oficina/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Oficina/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Geral/Scenes/Sine.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Geral/Scenes/Sine.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Geral/Scripts/Math/SineMovement.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Geral/Scripts/Math/SineMovement.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/PJD3M/Scenes/CenaTopDown.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/PJD3M/Scenes/CenaTopDown.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2021.dwlt" afterDir="false" />
     </list>
@@ -90,7 +87,8 @@
       <workItem from="1682983594654" duration="1932000" />
       <workItem from="1683584361034" duration="4827000" />
       <workItem from="1684071080141" duration="13874000" />
-      <workItem from="1684190012624" duration="4911000" />
+      <workItem from="1684190012624" duration="5287000" />
+      <workItem from="1684801384089" duration="2515000" />
     </task>
     <servers />
   </component>
