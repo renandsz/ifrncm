@@ -42,7 +42,8 @@ public class Bouncer : MonoBehaviour
     {
         if (tipo != TimeType.fixedT) return;
         rb.angularVelocity = torque;//(torque *Time.fixedDeltaTime);
-        AntiFlash();
+                                    // AntiFlash();
+        Flash();
     }
 
     void Flash()
