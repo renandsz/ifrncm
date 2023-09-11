@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="37fa5b97-38c8-4b58-b08d-60c22543ece8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Oficina/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Oficina/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Geral/Scenes/NewPlat.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Geral/Scenes/NewPlat.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/PJD3M/Scripts/PlatformerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/PJD3M/Scripts/PlatformerController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +87,7 @@
       <workItem from="1684190012624" duration="5287000" />
       <workItem from="1684801384089" duration="2515000" />
       <workItem from="1694383988117" duration="7372000" />
-      <workItem from="1694436871967" duration="3847000" />
+      <workItem from="1694436871967" duration="4439000" />
     </task>
     <servers />
   </component>

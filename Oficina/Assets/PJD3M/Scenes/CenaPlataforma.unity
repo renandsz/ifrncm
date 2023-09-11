@@ -3389,6 +3389,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00e5ed847bccc04499f3b1f0e35565d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillAtual: 0
+  invulneravel: 0
+  tempoInvMax: 0
+  tempoInvAtual: 0
   velocidade: 10
   forcaPulo: 10
   visual: {fileID: 0}
@@ -5664,5 +5668,13 @@ PrefabInstance:
       propertyPath: barra
       value: 
       objectReference: {fileID: 866230342}
+    - target: {fileID: 5410763477396621051, guid: 7b2f2665ce5a81549a84054ae0576dd2, type: 3}
+      propertyPath: skillAtual
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5410763477396621051, guid: 7b2f2665ce5a81549a84054ae0576dd2, type: 3}
+      propertyPath: tempoInvMax
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b2f2665ce5a81549a84054ae0576dd2, type: 3}
