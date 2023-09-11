@@ -5,8 +5,20 @@ using Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum PlayerSkills
+{
+    tiroNormal,
+    tiroTriplo,
+    seila,
+    etc
+}
+
 public class PlatformerController : MonoBehaviour
 {
+    public PlayerSkills skillAtual = PlayerSkills.tiroNormal;
+    public bool invulneravel = false;
+    public float tempoInvMax, tempoInvAtual;
+    
     //vari�veis p�blicas aparecem no inspetor
     public int velocidade;
     public int forcaPulo;
@@ -18,7 +30,8 @@ public class PlatformerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        //preparando cooldown
+        tempoInvAtual = tempoInvMax;
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -76,22 +89,50 @@ public class PlatformerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            vidaAtual -= 30;
-
-
-
-
-            float angulo = olhandoPraDireita ? 0 : 180; 
+            if (skillAtual == PlayerSkills.tiroNormal)
+            {
+                float angulo = olhandoPraDireita ? 0 : 180;
+                GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
+                GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
+                GetComponent<AudioSource>().Play();
+            }
             
-           // GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
+            if (skillAtual == PlayerSkills.tiroTriplo)
+            {
+                float angulo = olhandoPraDireita ? 0 : 180;
+                GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
+                GetComponent<Atirador>().Atirar().Rotate(Vector3.forward* (angulo + 15));
+                GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*(angulo -15));
+                GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
+                GetComponent<AudioSource>().Play();
+            }
             
-           // GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
-            
-            GetComponent<AudioSource>().Play();
+        }
+        
+        //dash
+
+        if (Input.GetKeyDown(KeyCode.X) && !invulneravel)
+        {
+            Vector2 direcao = olhandoPraDireita ? Vector2.right : Vector2.left;
+            GetComponent<Rigidbody2D>().AddForce(direcao * forcaPulo,ForceMode2D.Impulse);
+            invulneravel = true;
+            Debug.Log("invulnerável");
+        }
+
+        //cooldown da invulnerabilidade
+        if (invulneravel)
+        {
+            tempoInvAtual -= Time.deltaTime;
+            if (tempoInvAtual <= 0)
+            {
+                invulneravel = false;
+                tempoInvAtual = tempoInvMax;
+            }
         }
 
         
     }
+    
 
     public Slider barra;
     public float vidaAtual = 100;
