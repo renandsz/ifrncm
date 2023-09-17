@@ -24,6 +24,7 @@ namespace BossGame.Scripts
         private Vector2 _topRight = new Vector2(0.49f,0.49f);
         private float raySize = 5; //tamanho do raio
         private BoxCollider2D playerCollider;
+        private int anguloRampa = 175;
         
        
         private void Start()
@@ -118,23 +119,35 @@ namespace BossGame.Scripts
             DbLinha(tp+_bottomRight,Vector2.down);
             
             //lembre de adicionar o player na layer "IGNORE RAYCAST"
-             if (!hitD1.collider && !hitD2.collider )
+             if (
+                     (!hitD1.collider && !hitD2.collider)
+                        ||
+                     (
+                         (hitD1.collider && !hitD1.collider.IsTouching(playerCollider))
+                            && 
+                         (hitD2.collider && !hitD2.collider.IsTouching(playerCollider))
+                     )
+                 )
              {
                  noAr = true; //rays bateram em nada, tudo nulo = no ar
              }
-             else
+             else if 
+                 ((hitD1.collider && hitD1.collider.IsTouching(playerCollider) )
+                  ^ (hitD2.collider && hitD2.collider.IsTouching(playerCollider)))
              {
-                //se nao tiver nada abaixo do player, ta no ar
-                if (hitD1.collider)
-                {
-                    noAr = !hitD1.collider.IsTouching(playerCollider);
-                    DbHit(hitD1.point);//debug
-                }
-                else if (hitD2.collider)
-                {
-                    noAr = !hitD2.collider.IsTouching(playerCollider);
-                    DbHit(hitD2.point);//debug
-                }
+                 //algum raycast pegou algo, ta no chao
+                 noAr = false;
+                 if(hitD1.collider&& hitD1.collider.IsTouching(playerCollider)) DbHit(hitD1.point);//debug
+                 if(hitD2.collider&& hitD2.collider.IsTouching(playerCollider)) DbHit(hitD2.point);//debug
+             }
+             else if 
+                 ((hitD1.collider && hitD1.collider.IsTouching(playerCollider) )
+                  && (hitD2.collider && hitD2.collider.IsTouching(playerCollider)))
+             {
+                //os dois pegaram e os dois estao no chao
+                noAr = false;
+                if(hitD1.collider) DbHit(hitD1.point);//debug
+                if(hitD2.collider) DbHit(hitD2.point);//debug
             }
             
             if (!hitH1.collider && !hitH2.collider )
@@ -146,23 +159,28 @@ namespace BossGame.Scripts
              || (hitH2.collider && hitH2.collider.IsTouching(playerCollider)))
             {
                 //se tiver encostado em alguma parede
+                //checando inclinação pra saber se é uma parede
+                bool rampa = false;
+                if (hitH1.collider && hitH1.collider.IsTouching(playerCollider))
+                {
+                    var reflectedDirection = Vector2.Reflect(dir, hitH1.normal);
+                    float angle = Vector2.Angle(dir, reflectedDirection);
+                    rampa = rampa || angle <= anguloRampa;
+                    Debug.Log($"angulo1: {angle}");
+                }
+                
+                if (hitH2.collider && hitH2.collider.IsTouching(playerCollider))
+                {
+                    var reflectedDirection = Vector2.Reflect(dir, hitH2.normal);
+                    float angle = Vector2.Angle(dir, reflectedDirection);
+                    rampa = rampa || angle <= anguloRampa;
+                    Debug.Log($"angulo2: {angle}");
+                }
+                
                 naParede = true;
                 if(hitH1.collider) DbHit(hitH1.point);//debug
                 if(hitH2.collider) DbHit(hitH2.point);//debug
             }
-            /*else
-            {
-                if (hitH1.collider)
-                {
-                    naParede = hitH1.collider.IsTouching(playerCollider);
-                    DbHit(hitH1.point); //debug
-                }
-                else if (hitH2.collider)
-                {
-                    naParede = hitH2.collider.IsTouching(playerCollider);
-                    DbHit(hitH2.point);//debug
-                }
-            }*/
         }
 
 
@@ -182,7 +200,7 @@ namespace BossGame.Scripts
         }
         private void DbHit(Vector2 startPos)
         {
-            Debug.DrawLine(startPos,startPos + Vector2.one * 0.5f,Color.blue,Time.deltaTime);
+            Debug.DrawLine(startPos,startPos + Vector2.one * 0.5f,Color.magenta,Time.deltaTime);
         }
         
     }
