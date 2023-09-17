@@ -22,7 +22,7 @@ namespace BossGame.Scripts
         private Vector2 _bottomRight = new Vector2(0.49f,-0.49f);
         private Vector2 _topLeft = new Vector2(-0.49f,0.49f);
         private Vector2 _topRight = new Vector2(0.49f,0.49f);
-        private float raySize = 5; //tamanho do raio
+        public float raySize = 1; //tamanho do raio
         private BoxCollider2D playerCollider;
         private int anguloRampa = 175;
         
@@ -159,24 +159,6 @@ namespace BossGame.Scripts
              || (hitH2.collider && hitH2.collider.IsTouching(playerCollider)))
             {
                 //se tiver encostado em alguma parede
-                //checando inclinação pra saber se é uma parede
-                bool rampa = false;
-                if (hitH1.collider && hitH1.collider.IsTouching(playerCollider))
-                {
-                    var reflectedDirection = Vector2.Reflect(dir, hitH1.normal);
-                    float angle = Vector2.Angle(dir, reflectedDirection);
-                    rampa = rampa || angle <= anguloRampa;
-                    Debug.Log($"angulo1: {angle}");
-                }
-                
-                if (hitH2.collider && hitH2.collider.IsTouching(playerCollider))
-                {
-                    var reflectedDirection = Vector2.Reflect(dir, hitH2.normal);
-                    float angle = Vector2.Angle(dir, reflectedDirection);
-                    rampa = rampa || angle <= anguloRampa;
-                    Debug.Log($"angulo2: {angle}");
-                }
-                
                 naParede = true;
                 if(hitH1.collider) DbHit(hitH1.point);//debug
                 if(hitH2.collider) DbHit(hitH2.point);//debug
