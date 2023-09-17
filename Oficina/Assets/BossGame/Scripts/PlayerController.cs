@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace BossGame.Scripts
@@ -7,13 +8,22 @@ namespace BossGame.Scripts
     {
         public int velocidade, forcaPulo, forcaDash;
 
-        public bool movendo, noAr, olhandoPraDireita;
+        public bool movendo, noAr, olhandoDireita,naParede;
 
+        private float h; //input horizontal
+        
         private Animator animator;
         private SpriteRenderer renderer;
         private Rigidbody2D rb;
         
-       // private Vector2
+        
+        //ponto de origem dos raycasts pra escanear as colisoes
+        private Vector2 _botomLeft = new Vector2(-0.49f,-0.49f);
+        private Vector2 _bottomRight = new Vector2(0.49f,-0.49f);
+        private Vector2 _topLeft = new Vector2(-0.49f,0.49f);
+        private Vector2 _topRight = new Vector2(0.49f,0.49f);
+        private float raySize = 5; //tamanho do raio
+        private BoxCollider2D playerCollider;
         
        
         private void Start()
@@ -24,60 +34,155 @@ namespace BossGame.Scripts
             child.TryGetComponent(out animator);
             child.TryGetComponent(out renderer);
         
-            //pegando ref para o rigidbody2d
+            //pegando ref para o rigidbody2d e collider
             TryGetComponent(out rb);
+            TryGetComponent(out playerCollider);
         }
-
-        private void OnTriggerStay2D(Collider2D other)
-        {
-            
-            
-            RaycastHit2D hit1 = Physics2D.Raycast(transform.position, Vector2.down);
-            if (hit1.collider == other)
-            {
-                noAr = false;
-            }
-        }
-
+ 
 
         private void Update()
         {
-            float h = Input.GetAxis("Horizontal");
+            h = Input.GetAxis("Horizontal");
             movendo = h != 0; //se o input é diferente de zero, tá se movendo
             if (h > 0) //olhando pra direita
             {
-                olhandoPraDireita = true;
+                olhandoDireita = true;
                 renderer.flipX = false;
                 //a sprite que to usando ja olha pra direita
                 //só precisa espelhar (flipar) se for olhar pra esquerda
             }
             if (h < 0)//olhando pra esquerda
             {
-                olhandoPraDireita = false;
+                olhandoDireita = false;
                 renderer.flipX = true;
             }
 
-            
+            //raycasts pra verificar se ta na parede ou no chao
+            EscaneandoTerreno();
             //movendo boneco
-            Vector2 moveVector = new Vector2(h * velocidade,0);
-            rb.velocity = new Vector2(moveVector.x,rb.velocity.y);
-            
-            
+            Movendo();
             //pulo
-            if (Input.GetKeyDown(KeyCode.Space) && !noAr)
+            Pulo();
+            AtualizarAnimator(); //manter sempre no final do update
+        } 
+        void Movendo()
+        {
+            if (h != 0 && !naParede)
             {
-                Vector2 jumpForce = Vector2.up * forcaPulo;
-                rb.AddForce(jumpForce,ForceMode2D.Impulse);
-                noAr = false; //sai do chao
+                transform.position += new Vector3(h,0,0) * (velocidade * Time.deltaTime);
+                movendo = true;
+            }
+            else
+            {
+                movendo = false;
+            }
+        }
+
+        void Pulo()
+        {
+            if (!noAr)
+            {
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    rb.AddForce(Vector2.up * forcaPulo,ForceMode2D.Impulse);
+                    noAr = true;
+                }
+            }
+        }
+
+        void EscaneandoTerreno()
+        {
+            var tp = (Vector2)transform.position;
+            Vector2 dir = olhandoDireita ? Vector2.right : Vector2.left;
+            Vector2 bot = olhandoDireita ? _bottomRight : _botomLeft;
+            Vector2 top = olhandoDireita ? _topRight : _topLeft;
+            //raycasts horizontais esq e dir
+            /* esq       dir
+               ---[    ]---
+               ___[    ]___
+            */
+            RaycastHit2D hitH1 = Physics2D.Raycast(tp + bot, dir, raySize);
+            RaycastHit2D hitH2 = Physics2D.Raycast(tp + top, dir, raySize);
+            DbLinha(tp + bot,dir);
+            DbLinha(tp + top,dir);
+            
+            //raycasts para baixo 1 e 2 esq e dir
+            /*
+               [    ]
+               [    ]
+                |  |  pra baixo
+            */
+            RaycastHit2D hitD1 = Physics2D.Raycast(tp+_botomLeft, Vector2.down, raySize);
+            RaycastHit2D hitD2 = Physics2D.Raycast(tp+_bottomRight, Vector2.down, raySize);
+            DbLinha(tp+_botomLeft,Vector2.down);
+            DbLinha(tp+_bottomRight,Vector2.down);
+            
+            //lembre de adicionar o player na layer "IGNORE RAYCAST"
+             if (!hitD1.collider && !hitD2.collider )
+             {
+                 noAr = true; //rays bateram em nada, tudo nulo = no ar
+             }
+             else
+             {
+                //se nao tiver nada abaixo do player, ta no ar
+                if (hitD1.collider)
+                {
+                    noAr = !hitD1.collider.IsTouching(playerCollider);
+                    DbHit(hitD1.point);//debug
+                }
+                else if (hitD2.collider)
+                {
+                    noAr = !hitD2.collider.IsTouching(playerCollider);
+                    DbHit(hitD2.point);//debug
+                }
             }
             
-            AtualizarAnimator(); //manter sempre no final do update
+            if (!hitH1.collider && !hitH2.collider )
+            {
+                naParede = false; //rays bateram em nada, tudo nulo = sem parede
+            }
+            else if 
+            ((hitH1.collider && hitH1.collider.IsTouching(playerCollider) )
+             || (hitH2.collider && hitH2.collider.IsTouching(playerCollider)))
+            {
+                //se tiver encostado em alguma parede
+                naParede = true;
+                if(hitH1.collider) DbHit(hitH1.point);//debug
+                if(hitH2.collider) DbHit(hitH2.point);//debug
+            }
+            /*else
+            {
+                if (hitH1.collider)
+                {
+                    naParede = hitH1.collider.IsTouching(playerCollider);
+                    DbHit(hitH1.point); //debug
+                }
+                else if (hitH2.collider)
+                {
+                    naParede = hitH2.collider.IsTouching(playerCollider);
+                    DbHit(hitH2.point);//debug
+                }
+            }*/
         }
+
 
         void AtualizarAnimator()
         {
-            animator.SetBool("Movendo",movendo);
-            animator.SetBool("NoAr",noAr);
+            //verifique os parametros la na no animator
+            animator.SetBool("Moving",movendo);
+            animator.SetBool("OnAir",noAr);
+        }
+
+        
+        //metodos usados pra desenhar linhas na tela,
+        //visivel se clicar no botao gizmo da aba de game
+        private void DbLinha(Vector2 startPos, Vector2 dir)
+        {
+            Debug.DrawLine(startPos,startPos + dir * raySize,Color.yellow,Time.deltaTime);
+        }
+        private void DbHit(Vector2 startPos)
+        {
+            Debug.DrawLine(startPos,startPos + Vector2.one * 0.5f,Color.blue,Time.deltaTime);
         }
         
     }
