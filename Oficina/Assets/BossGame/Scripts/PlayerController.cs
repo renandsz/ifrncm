@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,19 +11,20 @@ namespace BossGame.Scripts
 
         public bool movendo, noAr, olhandoDireita,naParede;
 
-        private float h; //input horizontal
+        public GameObject tiroPrefab;
         
+        private float h; //input horizontal
         private Animator animator;
         private SpriteRenderer renderer;
         private Rigidbody2D rb;
-        
-        
+        private bool deuTiro;
+
         //ponto de origem dos raycasts pra escanear as colisoes
         private Vector2 _botomLeft = new Vector2(-0.49f,-0.49f);
         private Vector2 _bottomRight = new Vector2(0.49f,-0.49f);
         private Vector2 _topLeft = new Vector2(-0.49f,0.49f);
         private Vector2 _topRight = new Vector2(0.49f,0.49f);
-        public float raySize = 1; //tamanho do raio
+        private float raySize = 0.3f; //tamanho do raio
         private BoxCollider2D playerCollider;
         private int anguloRampa = 175;
         
@@ -64,9 +66,25 @@ namespace BossGame.Scripts
             Movendo();
             //pulo
             Pulo();
-           // Tir
+            // Tiro
+            Tiro();
+            //animação
             AtualizarAnimator(); //manter sempre no final do update
-        } 
+        }
+
+        private void Tiro()
+        {
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                deuTiro = true;
+                GameObject novoTiro = Instantiate(tiroPrefab, transform.position, Quaternion.identity);
+                if (!olhandoDireita)
+                {
+                    novoTiro.transform.Rotate(Vector3.forward,180);
+                }
+            }
+        }
+
         void Movendo()
         {
             if (h != 0 && !naParede)
@@ -172,6 +190,15 @@ namespace BossGame.Scripts
             //verifique os parametros la na no animator
             animator.SetBool("Moving",movendo);
             animator.SetBool("OnAir",noAr);
+            if (deuTiro)
+            {
+                animator.SetTrigger("Shoot");
+                deuTiro = false;
+            }
+            else
+            {
+                animator.ResetTrigger("Shoot");
+            }
         }
 
         
