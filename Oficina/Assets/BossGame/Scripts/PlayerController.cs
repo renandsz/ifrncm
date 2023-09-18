@@ -64,6 +64,7 @@ namespace BossGame.Scripts
             Movendo();
             //pulo
             Pulo();
+           // Tir
             AtualizarAnimator(); //manter sempre no final do update
         } 
         void Movendo()

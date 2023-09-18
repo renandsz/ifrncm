@@ -27,6 +27,11 @@ public class PlatformerController : MonoBehaviour
 
     public bool olhandoPraDireita = true;
 
+
+    public int balaPerSec = 10;
+    public float tempoAtual = 0;
+    public bool tiroContinuo;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -87,26 +92,13 @@ public class PlatformerController : MonoBehaviour
         
         //atirar
 
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (tiroContinuo)
         {
-            if (skillAtual == PlayerSkills.tiroNormal)
-            {
-                float angulo = olhandoPraDireita ? 0 : 180;
-                GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
-                GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
-                GetComponent<AudioSource>().Play();
-            }
-            
-            if (skillAtual == PlayerSkills.tiroTriplo)
-            {
-                float angulo = olhandoPraDireita ? 0 : 180;
-                GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
-                GetComponent<Atirador>().Atirar().Rotate(Vector3.forward* (angulo + 15));
-                GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*(angulo -15));
-                GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
-                GetComponent<AudioSource>().Play();
-            }
-            
+            TiroContinuo();
+        }
+        else
+        {
+            TiroSimples();
         }
         
         //dash
@@ -131,6 +123,64 @@ public class PlatformerController : MonoBehaviour
         }
 
         
+    }
+
+    void TiroSimples()
+    {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            //cooldown pra disparar x balas por segundo
+            
+                //executando tiro
+                if (skillAtual == PlayerSkills.tiroNormal)
+                {
+                    float angulo = olhandoPraDireita ? 0 : 180;
+                    GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
+                    GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
+                    GetComponent<AudioSource>().Play();
+                }
+                if (skillAtual == PlayerSkills.tiroTriplo)
+                {
+                    float angulo = olhandoPraDireita ? 0 : 180;
+                    GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
+                    GetComponent<Atirador>().Atirar().Rotate(Vector3.forward* (angulo + 15));
+                    GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*(angulo -15));
+                    GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
+                    GetComponent<AudioSource>().Play();
+                
+                }
+        }
+    }
+
+    void TiroContinuo()
+    {
+        if (Input.GetKey(KeyCode.Z))
+        {
+            //cooldown pra disparar x balas por segundo
+            tempoAtual -= Time.deltaTime;
+
+            if (tempoAtual <= 0)
+            {
+                //executando tiro
+                if (skillAtual == PlayerSkills.tiroNormal)
+                {
+                    float angulo = olhandoPraDireita ? 0 : 180;
+                    GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
+                    GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
+                    GetComponent<AudioSource>().Play();
+                }
+                if (skillAtual == PlayerSkills.tiroTriplo)
+                {
+                    float angulo = olhandoPraDireita ? 0 : 180;
+                    GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*angulo);
+                    GetComponent<Atirador>().Atirar().Rotate(Vector3.forward* (angulo + 15));
+                    GetComponent<Atirador>().Atirar().Rotate(Vector3.forward*(angulo -15));
+                    GetComponent<CinemachineImpulseSource>().GenerateImpulse(0.1f);
+                    GetComponent<AudioSource>().Play();
+                }
+                tempoAtual = 1.0f / balaPerSec;
+            }
+        }
     }
     
 
