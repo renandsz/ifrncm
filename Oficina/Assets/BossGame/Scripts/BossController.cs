@@ -8,7 +8,10 @@ namespace BossGame.Scripts
     public enum Boss1State
     {
         VaiEVolta,
-        Atacando
+        Atacando,
+        Intro,
+        Iniciando,
+        Parado,
     }
 
     public class BossController : MonoBehaviour
@@ -36,9 +39,11 @@ namespace BossGame.Scripts
         private Vector2 _topLeft = new Vector2(-1,1);
         private Vector2 _topRight = new Vector2(1,1);
         private float raySize = 0.3f; //tamanho do raio
-        private BoxCollider2D playerCollider;
+        private BoxCollider2D thisCollider;
         private int anguloRampa = 175;
 
+       // public float altura = 3;
+       public Transform marcadorAltura;
         private void Awake()
         {
             _botomLeft *= b * scaleFactor;
@@ -54,20 +59,38 @@ namespace BossGame.Scripts
             //passando a referencia pro animator e spriterenderer
             //que ta na primeira child
             Transform child = transform.GetChild(0);
+            marcadorAltura = transform.GetChild(1);
             child.TryGetComponent(out animator);
             child.TryGetComponent(out renderer);
         
             //pegando ref para o rigidbody2d e collider
             TryGetComponent(out rb);
-            TryGetComponent(out playerCollider);
+            TryGetComponent(out thisCollider);
+        }
+
+        private void OnCollisionEnter2D(Collision2D col)
+        {    
+            if (col.gameObject.CompareTag("Player"))
+            {
+                if(col.transform.position.y <= marcadorAltura.position.y)
+                    naParede = true;
+            }
         }
 
         void InputSimulado()
         {
-            if (naParede && player.position.x <= transform.position.x)
+            if (naParede)
+            {
+                h *= -1;
+            }
+        }
+
+        void InputInicial()
+        {
+            if (player.position.x <= transform.position.x)
             {
                 h = -1;
-            }else if (naParede && player.position.x > transform.position.x)
+            }else if (player.position.x > transform.position.x)
             {
                 h = 1;
             }
@@ -75,18 +98,46 @@ namespace BossGame.Scripts
 
         private void Update()
         {
+            
             switch (comportamento)
             {
+                case Boss1State.Intro:
+                    return;
+                case Boss1State.Iniciando:
+                    InputInicial();
+                    comportamento = Boss1State.VaiEVolta;
+                    break;
+                case Boss1State.Parado:
+                    //espera um tempo antes de atacar
+                    break;
                 case Boss1State.VaiEVolta:
                     InputSimulado();
+                    //movendo boneco
+                    ChecarLado();
+                    Movendo();
                     break;
                 case Boss1State.Atacando:
+                    // Tiro
+                    Tiro();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
             
            
+            
+
+            //raycasts pra verificar se ta na parede ou no chao
+            EscaneandoTerreno();
+            
+            
+            
+            //animação
+            AtualizarAnimator(); //manter sempre no final do update
+        }
+
+        void ChecarLado()
+        {
             movendo = h != 0; //se o input é diferente de zero, tá se movendo
             if (h > 0) //olhando pra direita
             {
@@ -100,17 +151,6 @@ namespace BossGame.Scripts
                 olhandoDireita = false;
                 renderer.flipX = true;
             }
-
-            //raycasts pra verificar se ta na parede ou no chao
-            EscaneandoTerreno();
-            //movendo boneco
-            Movendo();
-            //pulo
-            Pulo();
-            // Tiro
-            Tiro();
-            //animação
-            AtualizarAnimator(); //manter sempre no final do update
         }
 
         private void Tiro()
@@ -128,26 +168,18 @@ namespace BossGame.Scripts
 
         void Movendo()
         {
+            float mag = rb.velocity.magnitude;
+            Debug.Log(mag);
             if (h != 0 && !naParede)
             {
-                transform.position += new Vector3(h,0,0) * (velocidade * Time.deltaTime);
-                movendo = true;
+                rb.velocity = new Vector3(h, 0, 0) * (velocidade);
+               // transform.position += new Vector3(h,0,0) * (velocidade * Time.deltaTime);
+                
+               movendo = true;
             }
-            else
+            else if (mag <= 0.2f)
             {
                 movendo = false;
-            }
-        }
-
-        void Pulo()
-        {
-            if (!noAr)
-            {
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    rb.AddForce(Vector2.up * forcaPulo,ForceMode2D.Impulse);
-                    noAr = true;
-                }
             }
         }
 
@@ -183,26 +215,26 @@ namespace BossGame.Scripts
                      (!hitD1.collider && !hitD2.collider)
                         ||
                      (
-                         (hitD1.collider && !hitD1.collider.IsTouching(playerCollider))
+                         (hitD1.collider && !hitD1.collider.IsTouching(thisCollider))
                             && 
-                         (hitD2.collider && !hitD2.collider.IsTouching(playerCollider))
+                         (hitD2.collider && !hitD2.collider.IsTouching(thisCollider))
                      )
                  )
              {
                  noAr = true; //rays bateram em nada, tudo nulo = no ar
              }
              else if 
-                 ((hitD1.collider && hitD1.collider.IsTouching(playerCollider) )
-                  ^ (hitD2.collider && hitD2.collider.IsTouching(playerCollider)))
+                 ((hitD1.collider && hitD1.collider.IsTouching(thisCollider) )
+                  ^ (hitD2.collider && hitD2.collider.IsTouching(thisCollider)))
              {
                  //algum raycast pegou algo, ta no chao
                  noAr = false;
-                 if(hitD1.collider&& hitD1.collider.IsTouching(playerCollider)) DbHit(hitD1.point);//debug
-                 if(hitD2.collider&& hitD2.collider.IsTouching(playerCollider)) DbHit(hitD2.point);//debug
+                 if(hitD1.collider&& hitD1.collider.IsTouching(thisCollider)) DbHit(hitD1.point);//debug
+                 if(hitD2.collider&& hitD2.collider.IsTouching(thisCollider)) DbHit(hitD2.point);//debug
              }
              else if 
-                 ((hitD1.collider && hitD1.collider.IsTouching(playerCollider) )
-                  && (hitD2.collider && hitD2.collider.IsTouching(playerCollider)))
+                 ((hitD1.collider && hitD1.collider.IsTouching(thisCollider) )
+                  && (hitD2.collider && hitD2.collider.IsTouching(thisCollider)))
              {
                 //os dois pegaram e os dois estao no chao
                 noAr = false;
@@ -215,8 +247,8 @@ namespace BossGame.Scripts
                 naParede = false; //rays bateram em nada, tudo nulo = sem parede
             }
             else if 
-            ((hitH1.collider && hitH1.collider.IsTouching(playerCollider) )
-             || (hitH2.collider && hitH2.collider.IsTouching(playerCollider)))
+            ((hitH1.collider && hitH1.collider.IsTouching(thisCollider) )
+             || (hitH2.collider && hitH2.collider.IsTouching(thisCollider)))
             {
                 //se tiver encostado em alguma parede
                 naParede = true;
@@ -246,5 +278,11 @@ namespace BossGame.Scripts
             Debug.DrawLine(startPos,startPos + Vector2.one * 0.5f,Color.magenta,Time.deltaTime);
         }
         
+        public void TerminouIntro()
+        {
+            comportamento = Boss1State.Iniciando;
+        }
+        
     }
+    
 }
