@@ -1,7 +1,6 @@
 using System;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
+using Random = System.Random;
 
 namespace BossGame.Scripts
 {
@@ -17,7 +16,7 @@ namespace BossGame.Scripts
     public class BossController : MonoBehaviour
     {
         public Boss1State comportamento = Boss1State.VaiEVolta;
-        public int velocidade, forcaPulo, forcaDash;
+        public int velocidade, forcaEmpurrao;
 
         public bool movendo, noAr, olhandoDireita, naParede;
 
@@ -41,9 +40,23 @@ namespace BossGame.Scripts
         private float raySize = 0.3f; //tamanho do raio
         private BoxCollider2D thisCollider;
         private int anguloRampa = 175;
+        
 
        // public float altura = 3;
        public Transform marcadorAltura;
+       
+       
+       
+       //comportamento de atirar depois de um tempo
+
+       public int voltasMax = 10;
+       public int voltasAtuais;
+       public bool atropelou,atirando;
+       public float tirosPorSeg = 10;
+       public float cooldownTiro;
+       public float arcoTiro = 15;
+       public float tempoAtirando;
+       public float tempoAtirandoMax = 2;
         private void Awake()
         {
             _botomLeft *= b * scaleFactor;
@@ -55,6 +68,8 @@ namespace BossGame.Scripts
 
         private void Start()
         {
+            voltasAtuais = voltasMax;
+            tempoAtirando = tempoAtirandoMax;
             player = GameObject.FindWithTag("Player").transform;
             //passando a referencia pro animator e spriterenderer
             //que ta na primeira child
@@ -73,15 +88,33 @@ namespace BossGame.Scripts
             if (col.gameObject.CompareTag("Player"))
             {
                 if(col.transform.position.y <= marcadorAltura.position.y)
-                    naParede = true;
+                    atropelou = true;
+                
+                Empurrar(col.gameObject.GetComponent<Rigidbody2D>());
             }
         }
 
+        void Empurrar(Rigidbody2D playerRb)
+        {
+            Vector2 dir = olhandoDireita ? Vector2.right : Vector2.left;
+
+            Vector2 arco = new Vector2(dir.x, 0.2f);
+            playerRb.AddForce(arco * forcaEmpurrao,ForceMode2D.Impulse);
+        }
         void InputSimulado()
         {
-            if (naParede)
+            if (naParede || atropelou)
             {
                 h *= -1;
+                if(!atropelou)
+                {
+                    voltasAtuais--;
+                    if (voltasAtuais <= 0)
+                    {
+                        voltasAtuais = voltasMax;
+                        comportamento = Boss1State.Atacando;
+                    }
+                }
             }
         }
 
@@ -155,21 +188,38 @@ namespace BossGame.Scripts
 
         private void Tiro()
         {
-            if (Input.GetKeyDown(KeyCode.Z))
+            atirando = true;
+            tempoAtirando -= Time.deltaTime;
+            
+            
+            cooldownTiro -= Time.deltaTime;
+            if (cooldownTiro <= 0)
             {
-                deuTiro = true;
+                cooldownTiro = 1 / tirosPorSeg;
                 GameObject novoTiro = Instantiate(tiroPrefab, transform.position, Quaternion.identity);
                 if (!olhandoDireita)
                 {
-                    novoTiro.transform.Rotate(Vector3.forward,180);
+                    novoTiro.transform.Rotate(Vector3.forward,180 + UnityEngine.Random.Range(-arcoTiro,arcoTiro));
                 }
+                else
+                {
+                    novoTiro.transform.Rotate(Vector3.forward, UnityEngine.Random.Range(-arcoTiro,arcoTiro));
+
+                }
+            }
+
+            if (tempoAtirando <= 0)
+            {
+                tempoAtirando = tempoAtirandoMax;
+                atirando = false;
+                comportamento = Boss1State.VaiEVolta;
             }
         }
 
         void Movendo()
         {
-            float mag = rb.velocity.magnitude;
-            Debug.Log(mag);
+            float mag = (Math.Abs(rb.velocity.x));
+            //Debug.Log(mag);
             if (h != 0 && !naParede)
             {
                 rb.velocity = new Vector3(h, 0, 0) * (velocidade);
@@ -177,7 +227,7 @@ namespace BossGame.Scripts
                 
                movendo = true;
             }
-            else if (mag <= 0.2f)
+            else if (mag <= 0.02f || atirando )
             {
                 movendo = false;
             }
@@ -245,6 +295,7 @@ namespace BossGame.Scripts
             if (!hitH1.collider && !hitH2.collider )
             {
                 naParede = false; //rays bateram em nada, tudo nulo = sem parede
+                atropelou = false;
             }
             else if 
             ((hitH1.collider && hitH1.collider.IsTouching(thisCollider) )
@@ -262,7 +313,7 @@ namespace BossGame.Scripts
         {
             //verifique os parametros la na no animator
             animator.SetBool("Moving",movendo);
-            animator.SetBool("Shooting",deuTiro);
+            animator.SetBool("Shooting",atirando);
             
         }
 

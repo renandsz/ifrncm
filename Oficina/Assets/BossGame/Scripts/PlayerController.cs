@@ -9,8 +9,9 @@ namespace BossGame.Scripts
     {
         public int velocidade, forcaPulo, forcaDash;
 
-        public bool movendo, noAr, olhandoDireita,naParede;
-
+        public bool movendo, noAr, olhandoDireita,naParede,tomouDano;
+        public float tempoMachucado = 1;
+        private float tempoAtual = 0;
         public GameObject tiroPrefab;
         
         private float h; //input horizontal
@@ -18,6 +19,7 @@ namespace BossGame.Scripts
         private SpriteRenderer renderer;
         private Rigidbody2D rb;
         private bool deuTiro;
+        
 
         //ponto de origem dos raycasts pra escanear as colisoes
         private Vector2 _botomLeft = new Vector2(-0.49f,-0.49f);
@@ -40,11 +42,35 @@ namespace BossGame.Scripts
             //pegando ref para o rigidbody2d e collider
             TryGetComponent(out rb);
             TryGetComponent(out playerCollider);
+
+            tempoAtual = tempoMachucado;
         }
- 
+
+        private void OnCollisionEnter2D(Collision2D col)
+        {
+            if (col.gameObject.CompareTag("Boss"))
+            {
+                tomouDano = true;
+            }
+        }
+
 
         private void Update()
         {
+            
+            animator.SetBool("Hit",tomouDano);
+            if (tomouDano)
+            {
+                tempoAtual -= Time.deltaTime;
+                if (tempoAtual <= 0)
+                {
+                    tomouDano = false;
+                    tempoAtual = tempoMachucado;
+                }
+                return;
+            }
+        
+        
             h = Input.GetAxis("Horizontal");
             movendo = h != 0; //se o input é diferente de zero, tá se movendo
             if (h > 0) //olhando pra direita
@@ -190,6 +216,7 @@ namespace BossGame.Scripts
             //verifique os parametros la na no animator
             animator.SetBool("Moving",movendo);
             animator.SetBool("OnAir",noAr);
+            animator.SetBool("Hit",tomouDano);
             if (deuTiro)
             {
                 animator.SetTrigger("Shoot");
