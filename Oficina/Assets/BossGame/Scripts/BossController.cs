@@ -57,6 +57,8 @@ namespace BossGame.Scripts
        public float arcoTiro = 15;
        public float tempoAtirando;
        public float tempoAtirandoMax = 2;
+
+       public int vida = 100;
         private void Awake()
         {
             _botomLeft *= b * scaleFactor;
@@ -81,6 +83,8 @@ namespace BossGame.Scripts
             //pegando ref para o rigidbody2d e collider
             TryGetComponent(out rb);
             TryGetComponent(out thisCollider);
+            GameManager.instance.InicializarBossHP(100);
+
         }
 
         private void OnCollisionEnter2D(Collision2D col)
@@ -94,6 +98,19 @@ namespace BossGame.Scripts
             }
         }
 
+        public void SubtrairVida(int valor)
+        {
+            vida -= valor;
+            
+            if (vida <= 0)
+            {
+                vida = 0;
+                // boss perdeu
+                Destroy(gameObject);
+            }
+
+            GameManager.instance.bossHP.value = vida;
+        }
         void Empurrar(Rigidbody2D playerRb)
         {
             Vector2 dir = olhandoDireita ? Vector2.right : Vector2.left;

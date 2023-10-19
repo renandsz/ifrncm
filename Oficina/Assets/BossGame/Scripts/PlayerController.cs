@@ -19,6 +19,8 @@ namespace BossGame.Scripts
         private SpriteRenderer renderer;
         private Rigidbody2D rb;
         private bool deuTiro;
+
+        public int vida = 100;
         
 
         //ponto de origem dos raycasts pra escanear as colisoes
@@ -44,6 +46,7 @@ namespace BossGame.Scripts
             TryGetComponent(out playerCollider);
 
             tempoAtual = tempoMachucado;
+            GameManager.instance.InicializarPlayerHP(100);
         }
 
         private void OnCollisionEnter2D(Collision2D col)
@@ -52,6 +55,17 @@ namespace BossGame.Scripts
             {
                 tomouDano = true;
             }
+        }
+        public void SubtrairVida(int valor)
+        {
+            vida -= valor;
+            if (vida <= 0)
+            {
+                vida = 0;
+                // perdeu
+                Destroy(gameObject);
+            }
+            GameManager.instance.bossHP.value = vida;
         }
 
 
