@@ -234,7 +234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   desbloqueouEspecial: 0
   velocidade: 7
-  forcaPulo: 7
+  forcaPulo: 10
   forcaDash: 0
   movendo: 0
   noAr: 0
@@ -244,15 +244,15 @@ MonoBehaviour:
   tempoMachucado: 1
   tiroPrefab: {fileID: 277757657083592951, guid: d3baf2c107dc7c248be393aa3799e8c3, type: 3}
   vida: 100
-  tiro: {fileID: 8300000, guid: c208b692e5b18a845b29a2c625c10a11, type: 3}
+  tiro: {fileID: 8300000, guid: 2251c92a56eeb6847a00bb348a5d691d, type: 3}
   pulo: {fileID: 8300000, guid: 9abd294ccdc3ed34d8dc07a2062755fd, type: 3}
   hit: {fileID: 8300000, guid: 57eaba441c513784ab03d10a57ccec89, type: 3}
   especialClip: {fileID: 8300000, guid: 9c49e1df3e1993d45bd2133edbc98519, type: 3}
   especialPrefab: {fileID: 1202169296457126418, guid: ca3409bf158de5d42b9bdfd538ee3941, type: 3}
   tiroEspecial: 0
-  tempoAtirandoMax: 2
+  tempoAtirandoMax: 0.3
   cooldownTiro: 0
-  tirosPorSeg: 10
+  tirosPorSeg: 20
   arcoTiro: 10
 --- !u!50 &1393249863888811018
 Rigidbody2D:
