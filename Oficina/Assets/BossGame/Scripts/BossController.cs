@@ -1,4 +1,6 @@
 using System;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = System.Random;
 
@@ -59,6 +61,17 @@ namespace BossGame.Scripts
        public float tempoAtirandoMax = 2;
 
        public int vida = 100;
+       
+       
+       //audio
+       private AudioSource source;
+       public AudioClip tiro, grito, hit;
+       
+       
+       //particulas
+       public GameObject explosionPrefab;
+       
+       public bool phase2;
         private void Awake()
         {
             _botomLeft *= b * scaleFactor;
@@ -83,6 +96,8 @@ namespace BossGame.Scripts
             //pegando ref para o rigidbody2d e collider
             TryGetComponent(out rb);
             TryGetComponent(out thisCollider);
+            TryGetComponent(out source);
+            
             GameManager.instance.InicializarBossHP(100);
 
         }
@@ -97,6 +112,16 @@ namespace BossGame.Scripts
                 Empurrar(col.gameObject.GetComponent<Rigidbody2D>());
             }
         }
+        private void OnTriggerEnter2D(Collider2D col)
+        {
+            if (col.gameObject.CompareTag("Tiro"))
+            {
+                source.PlayOneShot(hit);
+                Destroy(col.gameObject);
+                int valor = col.GetComponent<TiroVoando>().dano;
+                SubtrairVida(valor);
+            }
+        }
 
         public void SubtrairVida(int valor)
         {
@@ -106,10 +131,23 @@ namespace BossGame.Scripts
             {
                 vida = 0;
                 // boss perdeu
-                Destroy(gameObject);
+                Explodiu();
             }
 
             GameManager.instance.bossHP.value = vida;
+
+            if (!phase2 && vida <= 50)
+            {
+                phase2 = true;
+                EntrarComportamento2();
+            }
+        }
+
+        void Explodiu()
+        {
+            Instantiate(explosionPrefab, transform.position,quaternion.identity);
+            GameManager.instance.Explodiu();
+            Destroy(gameObject);
         }
         void Empurrar(Rigidbody2D playerRb)
         {
@@ -123,6 +161,7 @@ namespace BossGame.Scripts
             if (naParede || atropelou)
             {
                 h *= -1;
+                source.PlayOneShot(hit);
                 if(!atropelou)
                 {
                     voltasAtuais--;
@@ -207,13 +246,13 @@ namespace BossGame.Scripts
         {
             atirando = true;
             tempoAtirando -= Time.deltaTime;
-            
-            
+
             cooldownTiro -= Time.deltaTime;
             if (cooldownTiro <= 0)
             {
                 cooldownTiro = 1 / tirosPorSeg;
                 GameObject novoTiro = Instantiate(tiroPrefab, transform.position, Quaternion.identity);
+                source.PlayOneShot(tiro);
                 if (!olhandoDireita)
                 {
                     novoTiro.transform.Rotate(Vector3.forward,180 + UnityEngine.Random.Range(-arcoTiro,arcoTiro));
@@ -349,6 +388,21 @@ namespace BossGame.Scripts
         public void TerminouIntro()
         {
             comportamento = Boss1State.Iniciando;
+        }
+
+        public void Grito()
+        {
+            source.PlayOneShot(grito);
+        }
+
+        
+        public void EntrarComportamento2()
+        {
+            tirosPorSeg *= 1.5f;
+            velocidade *= 2;
+            arcoTiro /= 2;
+            animator.GetComponent<SpriteRenderer>().color = Color.red;
+            Grito();
         }
         
     }

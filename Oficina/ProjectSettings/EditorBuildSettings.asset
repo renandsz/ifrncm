@@ -17,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Geral/Scenes/Transicao.unity
     guid: 6d0c3c3f5f9bfdd41a2b6fc87de371fe
+  - enabled: 1
+    path: Assets/BossGame/Cenas/CenaBoss2.unity
+    guid: b8e4a48aba028fd45b72a9a3ba934f05
+  - enabled: 1
+    path: Assets/BossGame/Cenas/CenaBoss1.unity
+    guid: dc2d25d2a2e4c18459fc4dad75d4e6bd
   m_configObjects: {}

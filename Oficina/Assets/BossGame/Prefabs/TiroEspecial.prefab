@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 4042688739426692}
   - component: {fileID: 4787884185764685338}
   m_Layer: 0
-  m_Name: TiroBoss
-  m_TagString: TiroBoss
+  m_Name: TiroEspecial
+  m_TagString: Tiro
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -138,7 +138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velocidade: 10
   tempoDeVida: 2
-  dano: 5
+  dano: 2
 --- !u!50 &4787884185764685338
 Rigidbody2D:
   serializedVersion: 4

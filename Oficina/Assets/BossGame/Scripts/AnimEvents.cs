@@ -9,4 +9,9 @@ public class AnimEvents : MonoBehaviour
     {
         GetComponentInParent<BossController>().TerminouIntro();
     }
+
+    public void GritoBoss()
+    {
+        GetComponentInParent<BossController>().Grito();
+    }
 }

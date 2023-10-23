@@ -2,11 +2,13 @@ using System;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BossGame.Scripts
 {
     public class PlayerController : MonoBehaviour
     {
+        public bool desbloqueouEspecial;
         public int velocidade, forcaPulo, forcaDash;
 
         public bool movendo, noAr, olhandoDireita,naParede,tomouDano;
@@ -32,7 +34,20 @@ namespace BossGame.Scripts
         private BoxCollider2D playerCollider;
         private int anguloRampa = 175;
         
-       
+        
+        // audio
+        private AudioSource source;
+        public AudioClip tiro, pulo, hit, especialClip;
+
+        public GameObject especialPrefab;
+        public bool tiroEspecial;
+        public float tempoAtirandoMax = 2;
+        private float tempoAtirando;
+        public float cooldownTiro;
+        public float tirosPorSeg = 10;
+        public int arcoTiro = 10;
+        
+
         private void Start()
         {
             //passando a referencia pro animator e spriterenderer
@@ -40,13 +55,15 @@ namespace BossGame.Scripts
             Transform child = transform.GetChild(0);
             child.TryGetComponent(out animator);
             child.TryGetComponent(out renderer);
-        
+            
             //pegando ref para o rigidbody2d e collider
             TryGetComponent(out rb);
             TryGetComponent(out playerCollider);
+            TryGetComponent(out source);
 
             tempoAtual = tempoMachucado;
             GameManager.instance.InicializarPlayerHP(100);
+            tempoAtirando = tempoAtirandoMax;
         }
 
         private void OnCollisionEnter2D(Collision2D col)
@@ -54,8 +71,22 @@ namespace BossGame.Scripts
             if (col.gameObject.CompareTag("Boss"))
             {
                 tomouDano = true;
+                source.PlayOneShot(hit);
+                SubtrairVida(5);
             }
         }
+
+        private void OnTriggerEnter2D(Collider2D col)
+        {
+            if (col.gameObject.CompareTag("TiroBoss"))
+            {
+                source.PlayOneShot(hit);
+                Destroy(col.gameObject);
+                int valor = col.GetComponent<TiroVoando>().dano;
+                SubtrairVida(valor);
+            }
+        }
+
         public void SubtrairVida(int valor)
         {
             vida -= valor;
@@ -63,9 +94,9 @@ namespace BossGame.Scripts
             {
                 vida = 0;
                 // perdeu
-                Destroy(gameObject);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
-            GameManager.instance.bossHP.value = vida;
+            GameManager.instance.playerHP.value = vida;
         }
 
 
@@ -108,14 +139,20 @@ namespace BossGame.Scripts
             Pulo();
             // Tiro
             Tiro();
+            if(desbloqueouEspecial)
+            {
+                TiroEspecial();
+            }
             //animação
             AtualizarAnimator(); //manter sempre no final do update
         }
 
         private void Tiro()
         {
+            if(tiroEspecial) return;
             if (Input.GetKeyDown(KeyCode.Z))
             {
+                source.PlayOneShot(tiro);
                 deuTiro = true;
                 GameObject novoTiro = Instantiate(tiroPrefab, transform.position, Quaternion.identity);
                 if (!olhandoDireita)
@@ -124,9 +161,45 @@ namespace BossGame.Scripts
                 }
             }
         }
+        private void TiroEspecial()
+        {
+            if (Input.GetKeyDown(KeyCode.X) && !tiroEspecial)
+            {
+                tiroEspecial = true;
+            }
+            if (!tiroEspecial) return;
+            
+            deuTiro = true;
+            tempoAtirando -= Time.deltaTime;
+
+            cooldownTiro -= Time.deltaTime;
+            if (cooldownTiro <= 0)
+            {
+                cooldownTiro = 1 / tirosPorSeg;
+                GameObject novoTiro = Instantiate(especialPrefab, transform.position, Quaternion.identity);
+                source.PlayOneShot(especialClip);
+                if (!olhandoDireita)
+                {
+                    novoTiro.transform.Rotate(Vector3.forward,180 + UnityEngine.Random.Range(-arcoTiro,arcoTiro));
+                }
+                else
+                {
+                    novoTiro.transform.Rotate(Vector3.forward, UnityEngine.Random.Range(-arcoTiro,arcoTiro));
+
+                }
+            }
+
+            if (tempoAtirando <= 0)
+            {
+                tempoAtirando = tempoAtirandoMax;
+                tiroEspecial = false;
+                deuTiro = false;
+            }
+        }
 
         void Movendo()
         {
+            if(tiroEspecial) return;
             if (h != 0 && !naParede)
             {
                 transform.position += new Vector3(h,0,0) * (velocidade * Time.deltaTime);
@@ -140,12 +213,14 @@ namespace BossGame.Scripts
 
         void Pulo()
         {
+            if(tiroEspecial) return;
             if (!noAr)
             {
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     rb.AddForce(Vector2.up * forcaPulo,ForceMode2D.Impulse);
                     noAr = true;
+                    source.PlayOneShot(pulo);
                 }
             }
         }

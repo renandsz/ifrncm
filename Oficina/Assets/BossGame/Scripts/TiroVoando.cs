@@ -8,10 +8,13 @@ public class TiroVoando : MonoBehaviour
     public int velocidade = 10;
 
     public float tempoDeVida = 2;
+    public int dano;
+
+    private AudioSource source;
     // Start is called before the first frame update
     void Start()
     {
-        
+        TryGetComponent(out source);
     }
 
     private void OnTriggerEnter2D(Collider2D col)
