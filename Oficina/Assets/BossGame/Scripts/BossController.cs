@@ -136,11 +136,7 @@ namespace BossGame.Scripts
 
             GameManager.instance.bossHP.value = vida;
 
-            if (!phase2 && vida <= 50)
-            {
-                phase2 = true;
-                EntrarComportamento2();
-            }
+            
         }
 
         void Explodiu()
@@ -213,7 +209,11 @@ namespace BossGame.Scripts
                     throw new ArgumentOutOfRangeException();
             }
             
-           
+            if (!phase2 && vida <= 50)
+            {
+                phase2 = true;
+                EntrarComportamento2();
+            }
             
 
             //raycasts pra verificar se ta na parede ou no chao
